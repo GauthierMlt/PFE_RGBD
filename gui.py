@@ -64,7 +64,7 @@ class GUI:
              sg.Button("NEXT", k="_buttonNextID")],
             [sg.Text("Current location", s=(15, 1)), 
              sg.Combo(LOCATIONS, s=(20, 1), readonly=True, 
-                      default_value=LOCATIONS[0], k="comboLocations"),
+                      default_value=LOCATIONS[0], k="comboLocations")],
             #  sg.Button("NEXT", k="_buttonNextLocation"),],
             [sg.Button("Start camera", k="_buttonToggleCamera"), 
              sg.Button("Toggle anonymization", k="_buttonToggleAnonymization")],
