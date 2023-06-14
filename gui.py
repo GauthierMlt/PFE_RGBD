@@ -1,6 +1,7 @@
 from datetime import datetime
 import cameraWrapper as cw
 import PySimpleGUI as sg
+import subprocess
 import json
 import sys
 import cv2
@@ -61,7 +62,8 @@ class GUI:
                       s=(23,1), readonly=True),
              sg.Checkbox("Auto increment", k="_checkboxAutoIncrementID", 
                          default=self.autoIncrementID),
-             sg.Button("NEXT", k="_buttonNextID")],
+             sg.Button("NEXT", k="_buttonNextID"),
+             sg.Button("Open folder", k="_buttonOpenPatientFolder")],
             [sg.Text("Current location", s=(15, 1)), 
              sg.Combo(LOCATIONS, s=(20, 1), readonly=True, 
                       default_value=LOCATIONS[0], k="comboLocations"),
@@ -197,6 +199,25 @@ class GUI:
            
         self.enableAnonymization = not self.enableAnonymization
     
+    def buttonOpenFolderClicked(self):
+        
+        folderPath = os.path.join( 
+                                  os.path.dirname(__file__), 
+                                  DATABASE_PATH, 
+                                  self.window["inputID"].get(),
+                                  self.window["comboLocations"].get() )
+        
+        folderPath = folderPath.replace('/', '\\') 
+        
+        while not os.path.exists(folderPath):
+            
+            folderPath = os.path.dirname(folderPath)
+            
+            if len(folderPath) > 3:
+                return
+            
+        subprocess.Popen(f'explorer /select,"{folderPath}"')
+    
     def updateComboLocation(self, direction):
         
         currentSelection      = self.window["comboLocations"].get()
@@ -241,6 +262,9 @@ class GUI:
             elif event == "_buttonToggleAnonymization":
                 self.buttonToggleAnonymizationClicked()
             
+            elif event == "_buttonOpenPatientFolder":
+                self.buttonOpenFolderClicked()
+                
             elif event in ("_buttonNextID", "_right"):
                 self.buttonNextIDClicked()
                 
