@@ -94,6 +94,15 @@ def getCamera():
         
     return device
 
+def getIntrinsics():
+    
+    return rs.intrinsics
+
+def frameToPointCloud(depth_frame, color_frame):
+    pc = rs.pointcloud()
+    points = pc.calculate(depth_frame)
+    pc.map_to(color_frame)
+    
 def run():     
   
     device = getCamera()
@@ -168,3 +177,15 @@ def run():
         
         if cv2.waitKey(33) != -1:
             return
+
+if __name__ == "__main__":
+    # print(getIntrinsics().fx)
+    imgD   = cv2.imread("D_20230426_144008_00000.tiff", cv2.IMREAD_ANYDEPTH)
+    imgD = imgD / 255
+    # imgRGB = cv2.imread("RGB_20230426_144008_00000.jpeg")
+
+    for x, row in enumerate(imgD):
+        for y, value in enumerate(row):
+            print( rs.rs2_deproject_pixel_to_point(rs.intrinsics(), [float(x), float(y)], float(imgD[x][y])) )
+    # rs.rs2_deproject_pixel_to_point()
+    # frameToPointCloud(imgD, imgRGB)

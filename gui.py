@@ -193,7 +193,8 @@ class GUI:
         if self.enableAnonymization:
             self.window["_buttonToggleAnonymization"].update("Enable anonymization")
         else:
-           self.window["_buttonToggleAnonymization"].update("Disable anonymization") 
+           self.window["_buttonToggleAnonymization"].update("Disable anonymization")
+           
         self.enableAnonymization = not self.enableAnonymization
     
     def updateComboLocation(self, direction):
