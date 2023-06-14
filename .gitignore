@@ -2,3 +2,6 @@ Database
 __pycache__
 dist
 build
+*.jpeg
+*.tiff
+*.csv
