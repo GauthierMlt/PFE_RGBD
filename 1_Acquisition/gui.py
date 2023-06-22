@@ -43,6 +43,11 @@ class GUI:
         except:
             sg.popup_error("Could not find 'config.json'")
             sys.exit()
+    
+    def updateConfigFile(self):
+        
+        with open("config.json", "w") as f:
+            json.dump(self.config, f)
             
     def initUI(self):
         sg.LOOK_AND_FEEL_TABLE["SystemDefaultForReal"]["BACKGROUND"] = "#ffffff"
@@ -61,14 +66,14 @@ class GUI:
              sg.Input(str(self.config["nextID"]), k="inputID", 
                       s=(23,1), readonly=True),
              sg.Checkbox("Auto increment", k="_checkboxAutoIncrementID", 
-                         default=self.autoIncrementID),
+                         default=self.autoIncrementID, enable_events=True),
              sg.Button("NEXT", k="_buttonNextID"),
              sg.Button("Open folder", k="_buttonOpenPatientFolder")],
             [sg.Text("Current location", s=(15, 1)), 
              sg.Combo(LOCATIONS, s=(20, 1), readonly=True, 
                       default_value=LOCATIONS[0], k="comboLocations"),
              sg.Checkbox("Auto increment", k="_checkboxAutoIncrementLocations", 
-                         default=self.autoIncrementLocation),
+                         default=self.autoIncrementLocation, enable_events=True),
              sg.Button("Start recording", k="_buttonToggleRecording", disabled=True),
              sg.Text("...", k="textNumberFrames")],
             [sg.Button("Start camera", k="_buttonToggleCamera"),
@@ -131,18 +136,14 @@ class GUI:
         
     def buttonNextIDClicked(self):
         self.config["nextID"] += 1
-        with open("config.json", "w") as f:
-            json.dump(self.config, f)
-        
+        self.updateConfigFile()
         self.window["inputID"].update(self.config["nextID"])
     
     def buttonPreviousIDClicked(self):
         self.config["nextID"] -= 1
-        f = open("config.json", "w")
-        json.dump(self.config, f)
-        f.close()
+        self.updateConfigFile()
         self.window["inputID"].update(self.config["nextID"])
-           
+            
     def handleFrames(self):
         frames = self.camera.getNextFrames(self.enableAnonymization)
                 
@@ -166,7 +167,6 @@ class GUI:
                 
             elif self.frameCount == 0:
                 print("folder already exists")
-                # sg.PopupYesNo("")
                 pass
                 
             rgbImagePath   = os.path.join(writeDirectoryPath, 
@@ -174,8 +174,8 @@ class GUI:
             depthImagePath = os.path.join(writeDirectoryPath, 
                                           f"D_{dateTime}_{frameCountString}.tiff")
             
-            cv2.imwrite(rgbImagePath, RGBFrame)
-            cv2.imwrite(depthImagePath,   DepthFrame)
+            cv2.imwrite(rgbImagePath,   RGBFrame)
+            cv2.imwrite(depthImagePath, DepthFrame)
             
             if self.frameCount >= TARGET_IMAGES:
                 self.buttonToggleRecordingClicked()
@@ -213,7 +213,7 @@ class GUI:
             
             folderPath = os.path.dirname(folderPath)
             
-            if len(folderPath) > 3:
+            if len(folderPath) < 3:
                 return
             
         subprocess.Popen(f'explorer /select,"{folderPath}"')
@@ -282,6 +282,7 @@ class GUI:
                 
             elif event == "_checkboxAutoIncrementLocations":
                 self.autoIncrementLocation = self.window["_checkboxAutoIncrementLocations"].get()
+                print(self.autoIncrementLocation)
             
 if __name__ == "__main__":
     GUI().run()
