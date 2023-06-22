@@ -4,6 +4,8 @@ import numpy as np
 import PySimpleGUI as sg
 import cv2
 
+imagePath = "D_20230426_144008_00000.tiff"
+
 def array_to_data(array):
     im = Image.fromarray(array)
     with BytesIO() as output:
@@ -15,7 +17,7 @@ font = ("Courier New", 11)
 sg.theme("DarkBlue3")
 sg.set_options(font=font)
 
-image = cv2.imread("D_20230426_144008_00000.tiff", cv2.IMREAD_ANYDEPTH)
+image = cv2.imread(imagePath, cv2.IMREAD_ANYDEPTH)
 
 data = array_to_data(image)
 

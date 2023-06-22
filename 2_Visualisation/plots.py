@@ -2,6 +2,18 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import linregress
 from scipy.stats import t
+import os
+from scipy.stats import pearsonr
+import seaborn as sns
+
+def reg_coef(x,y,label=None,color=None,**kwargs):
+    ax = plt.gca()
+    r,p = pearsonr(x,y)
+    ax.annotate('r = {:.2f}'.format(r), xy=(0.5,0.5), xycoords='axes fraction', ha='center')
+    ax.set_axis_off()
+
+# Setting working directory to the path of this file
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 data = pd.read_csv("Donnees_sujets.csv")
 data=data.dropna()
@@ -45,7 +57,27 @@ def plotData(X_name: str, Y_name: str ="IMC", regression: bool=True):
 
 
 ## SCATTER PLOTS
-plotData("Epaisseur abdomen au niveau ombilical de profil (cm)")
-plotData("Epaisseur abdomen de face au niveau ombilical (cm)")
-plotData("Epaisseur 1ere phalange index (cm)", regression=False)
+# plotData("Epaisseur abdomen au niveau ombilical de profil (cm)")
+# plotData("Epaisseur abdomen de face au niveau ombilical (cm)")
+# plotData("Epaisseur 1ere phalange index (cm)", regression=False)
+# plt.show()
+
+# SCATTER MATRIX
+data_measures = data[[
+    "IMC", 
+    "Epaisseur abdomen au niveau ombilical de profil (cm)",
+    "Epaisseur abdomen de face au niveau ombilical (cm)",
+    "Epaisseur 1ere phalange index (cm)"]]
+
+data_measures.rename(columns={
+   "Epaisseur abdomen au niveau ombilical de profil (cm)" : "Epaisseur abdomen profil",
+   "Epaisseur abdomen de face au niveau ombilical (cm)": "Epaisseur abdomen face",
+   "Epaisseur 1ere phalange index (cm)": "Epaisseur index"
+}, inplace=True)
+
+# pd.plotting.scatter_matrix(data_measures,figsize=(20,20),grid=True)
+g = sns.PairGrid(data_measures)
+g.map_diag(sns.distplot)
+g.map_lower(sns.regplot)
+g.map_upper(reg_coef)
 plt.show()

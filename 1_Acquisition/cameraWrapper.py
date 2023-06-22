@@ -49,7 +49,7 @@ class CameraWrapper:
             print("No depth sensor")
             return
         
-    def getNextFrames(self, enableAnonymization):
+    def getNextFrames(self, enableAnonymization: bool):
         frameset = self.pipe.wait_for_frames()                  
         
         aligned_frames = self.align.process(frameset)
