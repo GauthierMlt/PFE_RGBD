@@ -50,6 +50,8 @@ class GUI:
             json.dump(self.config, f)
             
     def initUI(self):
+        """Sets the layout of the window and instanciates the sg.window object
+        """
         sg.LOOK_AND_FEEL_TABLE["SystemDefaultForReal"]["BACKGROUND"] = "#ffffff"
         sg.theme("SystemDefaultForReal")
         
@@ -91,14 +93,20 @@ class GUI:
                                 use_ttk_buttons=True)
 
     def bindTkinterEvents(self):
-        self.window.bind("<Right>", "_right")
-        self.window.bind("<Left>", "_left")
-        self.window.bind("<space>", "_spacebar")
-        self.window.bind("<Up>", "_up")
-        self.window.bind("<Down>", "_down")
+        """
+            Binds Tkinter keyboard events to the window 
+        """
+        
+        self.window.bind("<Right>", "_right")       # Right Arrow
+        self.window.bind("<Left>", "_left")         # Left Arrow
+        self.window.bind("<space>", "_spacebar")    # Spacebar
+        self.window.bind("<Up>", "_up")             # Up arrow
+        self.window.bind("<Down>", "_down")         # Down Arrow
         
     def buttonToggleCameraClicked(self):
-        
+        """
+            Toggles the visual feedback of the camera on the GUI
+        """
         if not self.camera:
             try:
                 self.camera = cw.CameraWrapper()
@@ -123,6 +131,9 @@ class GUI:
         self.window["_buttonToggleCamera"].update(text)
     
     def buttonToggleRecordingClicked(self):
+        """
+            Toggles the writing of the images on disk
+        """
         if self.isRecording:
             self.frameCount = 0
             self.isRecording = False
@@ -145,6 +156,9 @@ class GUI:
         self.window["inputID"].update(self.config["nextID"])
             
     def handleFrames(self):
+        """Recovers the latest frames from the camera, writes them on disk if
+           isRecording is set to True
+        """
         frames = self.camera.getNextFrames(self.enableAnonymization)
                 
         if not frames:
@@ -200,7 +214,9 @@ class GUI:
         self.enableAnonymization = not self.enableAnonymization
     
     def buttonOpenFolderClicked(self):
-        
+        """Opens the current target folder for writing the images (or its closest 
+            existing parent)
+        """
         folderPath = os.path.join( 
                                   os.path.dirname(__file__), 
                                   DATABASE_PATH, 
@@ -243,7 +259,8 @@ class GUI:
         self.window["comboLocations"].update(newSelection)
         
     def run(self):
-        
+        """Starts the gui
+        """
         while True:
             event, _ = self.window.read(timeout=0)
 
