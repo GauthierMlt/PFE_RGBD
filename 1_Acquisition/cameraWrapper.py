@@ -2,15 +2,19 @@ import pyrealsense2 as rs
 import numpy as np
 import cv2
 
-TARGET_WIDTH  = 640
-TARGET_HEIGHT = 480
-TARGET_FPS    = 6
+TARGET_WIDTH  = 640  # Width of captured images
+TARGET_HEIGHT = 480  # Height of captured images
+TARGET_FPS    = 6    # Number of FPS
 
 class CameraWrapper:
     
     def __init__(self):
+        """Gets the camera object from realsense API and initialize the pipeline
+
+        Raises:
+            Exception: If no realsense device is not connected
+        """
         self.camera = getCamera()
-        
         
         if not self.camera:  
             raise Exception("Could not find any RealSense Device")
@@ -18,7 +22,8 @@ class CameraWrapper:
         self.initCamera()
         
     def initCamera(self):
-            
+        """Initalise the camera pipeline
+        """
         self.config      = rs.config()
         self.pipe        = rs.pipeline()  
         self.colorizer   = rs.colorizer(3)
@@ -49,7 +54,17 @@ class CameraWrapper:
             print("No depth sensor")
             return
         
-    def getNextFrames(self, enableAnonymization: bool):
+    def getNextFrames(self, enableAnonymization: bool) -> tuple:
+        """Recovers the lastest aligned frames from the camera feed and returns them
+           as numpy arrays
+
+        Args:
+            enableAnonymization (bool): if true, will run face detection model and 
+                                        draw a black rectangle on faces
+
+        Returns:
+            color_image: np.array, depth_image: np.array
+        """
         frameset = self.pipe.wait_for_frames()                  
         
         aligned_frames = self.align.process(frameset)
@@ -81,6 +96,11 @@ class CameraWrapper:
         return color_image, depth_image
         
 def getCamera():
+    """Revocers the camera object
+
+    Returns:
+        rs.device: camera object
+    """
     cameras = list()
     device  = None
     
@@ -95,7 +115,6 @@ def getCamera():
     return device
 
 def getIntrinsics():
-    
     return rs.intrinsics
 
 def frameToPointCloud(depth_frame, color_frame):
