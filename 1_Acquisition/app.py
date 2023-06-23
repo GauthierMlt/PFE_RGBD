@@ -10,15 +10,8 @@ import os
 DATABASE_PATH = "Database"
 TARGET_IMAGES = 15
 LOCATIONS = [
-    "Epaule",
-    "Abdomen",
-    "Thorax Face",  
-    "Thorax profil",
-    "Coude",
-    "Main",
-    "Jambe",
-    "Genou",
-    # "Cheville"
+    "Location 1",
+    "Location 2"
 ]
 
 class GUI:
